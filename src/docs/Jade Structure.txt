@@ -1,0 +1,26 @@
+main():
+    Will call all other functions.
+    1.) openFile
+    2.) chunkCode ->
+            lexVarDeclare
+            lexIf
+            lexSwitch
+            lexSub
+            lexClass
+            lexLoop
+            lexMisc
+    3.) parseCode
+    4.) runCode
+    5.) WIN
+
+openFile():
+    opens the Jade file and reads it.
+
+chunkCode():
+    Chunks the code into blocks that will be sent over to different fn's
+    based upon what type of block it is.
+
+lexINSERTBLOCKTYPE():
+    Lexes the block of code and Returns a struct of meaningful info that
+    the interpreter will use to read and run code.
+

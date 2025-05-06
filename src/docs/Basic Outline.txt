@@ -1,0 +1,221 @@
+General Info:
+
+    REMINDER:
+        ALL INFO HERE IS TENATIVE AND SUBJECT TO CHANGE.
+
+Name(s): 
+    Jade        -       .bg
+                        .jd
+
+Rules:
+    Lines must end with a semicolon.
+    new variables are declared with var
+
+
+Variables:
+    Defined using "var" keyword.
+        mutable, read + write perms
+        uses:   general, all-purpose variables
+    Defined using "const" keyword
+        immutable, read-only perms
+        uses:   consistent variables that only need to be read from
+    Defined using "sink" keyword
+        mutable, write-only perms
+        uses:   logging, triggers, fire-and-forget
+
+    Basic Types:
+        Integers:
+            int         - defaults to an int32
+            int8        - 8  bit int (-127 to 127)
+            int16       - 16 bit int (-32767 to 32767)
+            int32       - 32 bit int (-2,147,483,647 to 2,147,483,647)
+            int64       - 64 bit int (-9,223,372,036,854,775,807 to 9,223,372,036,854,775,807)
+        
+            Extra stuff:
+                Adding 'u' before the 'int' removes the ability 
+                to have negative values but it allows the use of 
+                the previously negative values as extra positive ones.
+                for example: a uint8 would go from 0 to 255
+
+
+        Floats:
+            float       - defaults to a float32
+            float32     - 32 bit float
+            float64     - 64 bit float
+        
+        Booleans:
+            bool        - true/false or 1/0
+        
+        Strings:
+            str         - text
+
+    Composite Types:
+        b is a basicType variable
+        for example: 
+            var [3]int8 -> [1, 2, 3];
+        // This would be read as an array of int8's with a length of 3.
+
+        List-Like:
+            [n]b        - an array with a fixed length
+            []b         - a slice. like an array but not fixed length
+            (n) box     - like a tuple. It has a fixed length and is
+                        read-only. 
+        
+        Key/Value-Like:
+            hash[b1]  - a hash table. Doesn't remember order
+            dict[b1]  - a dictionary. like a hash table but it
+                            remembers the order
+            
+            the value can be any type. Can mix and match.
+            var myHash hash[] = {}
+        
+    Other Types:
+        pointers        - points to a place in memory.
+        struct          - defined using struct and is like
+                        a dict or hash but can store sub's
+                        as well. similar to a class.
+        class           - stores data that can be assigned to a
+                        variable. myVar = Person for example. 
+                        myVar can now call any sub's that are in
+                        Person.
+
+Control Structures:
+    The different ways to control the flow
+    and structure of the program
+    
+    Conditionals:
+        if () {}            - runs the code inside if the 
+                                statement is true
+        elif () {}          - if previous if/elif returned false, runs
+                                code inside if its own condition is true
+        unless () {}        - inverse of if. 
+        else {}             - runs code if all other if's return false
+        switch () {}        - switch case. Example:
+                                switch (myVar) {
+                                case ("yes") {
+                                    print("yes")
+                                }
+                                }
+        try () {}/          - a control structure that will try a block of
+        except () {}        of code and run the block of code in the except
+                            statement if the specified exception is raised
+    Loops:
+        for () {}           - loops based off given info. Example:
+                              for (i = 0; i < 25; i++;)
+        foreach () {}       - loops through an array or slice.
+                              can use foreach.idx()
+                              to loop with index.
+                              foreach(myArr, i) would make i the indexed
+                              value from myArr. .idx would make i the
+                              var and the parameter after it the will
+                              be the index
+        while () {}         - a standard while loop
+        until () {}         - loops until a condition is met
+
+    Objects:
+        sub () {}           - a subroutine. the same as a python
+                              function. uses the return keyword
+                              to specify what should be returned.
+        class {}            - standard class
+
+Operators:
+    Mathematical:
+        +                   - addition
+        -                   - subraction
+        *                   - multiplication
+        /                   - division
+        %                   - modulus
+        ^* or ** or */      - exponent
+        ^/                  - square root
+        ++                  - add one
+        --                  - subtract one
+
+    Equality:
+        =                   - set variable
+        ==                  - equals
+        ===                 - true equals
+        !=                  - not equals
+        <                   - less than
+        <=                  - less or equal
+        >                   - greater than
+        >=                  - greater or equal
+        <=>                 - less, equal, or greater. returns -1,0,or 1
+        'and' or &&         - and
+        'or'  or ||         - or
+
+        NOTE:
+            == will be true in the statement 1 == "1"
+            while 1 === "1" will be false.
+
+Built-In Functions:
+    Built-in functions are called using .*function*()
+    so checking if a variable (myVar) is defined would look
+    like this:
+    myVar.defined
+
+    The parenthases are only needed if the function has parameters.
+    some built-in functions aren't called using a period. Some like
+    print() are standalone functions that serve some purpose other
+    than directly affecting another thing's data. For these functions,
+    the parenthases are needed. 
+
+    For this list of my ideas, the ones that are standalone will NOT
+    have a period before them. Those that go after something WILL have
+    a period. Similarly, the functions that need parenthases will have
+    them. Those that don't have either are special cases.
+    
+    General:
+        time()              - get system time
+        localtime()         - get local time
+    Variables:
+        .len                - gets the length of the variable 
+                            (string or composite type).
+        .reverse            - reverses a string or composite type.
+    Basic Type:
+        .undef              - get and set undefined values
+        .defined            - check if value is defined
+        .substr()           - Cut and replace strings
+        .split()            - split a string by a specified delimiter
+        .uc()               - without any parameters, will convert a
+                            string to uppercase. uses parameter (int)
+                            to uppercase that many letters from the
+                            start
+        .lc()               - without any parameters, will convert a
+                            string to lowercase. uses parameter (int)
+                            to lowercase that many letters from the
+                            start
+    Composite Type:
+        .join()             - Concatenate strings by specifying a delimiter
+    Exception Handling:
+        die                 - exits the program
+        warn                - Output Warning
+        
+        
+
+
+
+
+Example Code Blocks:
+    Example01:
+        var num01 int8 = 10;
+        var num02 int8 = 5;
+        
+        // adds one to num02.
+        num02 ++;
+        var result int8 = x + y;
+
+        if (result > 10) {
+            printf("Large result: {result}");
+        } else {
+            printf("Small result.");
+        }
+
+
+    Example02:
+        // This is a 5 value array of uint8's
+        var numsArray [5]uint8 = [1, 3, 5, 7, 9]
+
+        // i is the values and idx is the index
+        foreach.idx(numsArray, i, idx) {
+            printf("{i} is at index: {idx}")
+        }

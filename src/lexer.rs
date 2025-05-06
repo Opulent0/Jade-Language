@@ -1,36 +1,88 @@
-// import necessary modules
+extern crate regex;
+
+//use regex::Regex;
 use std::fs::File;
 use std::io::Read;
+use logos::Logos;
 
+#[derive(Logos, Debug, PartialEq)]
+#[logos(skip r"[ \t\n\f\r]+")] // Ignore this regex pattern between tokens
+pub enum Token {
+    // KEYWORDS
+    #[token("var")]
+    Var,
+    #[token("const")]
+    Const,
+    #[token("sink")]
+    Sink,
 
-fn scanCode(file_lines: String) -> Vec<String> {
-    let mut blocks = vec![];
-    let mut current_block = String::new();
-    let mut brace_depth = 0;
+    // CONTROL SYMBOLS
+    #[token("=")]
+    Equals,
+    #[token(";")]
+    Semicolon,
+    #[token("{")]
+    OpenBrace,
+    #[token("}")]
+    CloseBrace,
+    #[token("(")]
+    OpenParen,
+    #[token(")")]
+    CloseParen,
 
-    for line in file_lines.split("\n") {
-        
-        // Trimming the code
-        let trimmed = line.trim();
+    // OPERATORS:
+    // Math
+    #[token("+")]
+    Addition,
+    #[token("-")]
+    Subtraction,
+    #[token("*")]
+    Multiplication,
+    #[token("/")]
+    Division,
+    #[token("**")]
+    Exponent,
+    #[token("^/")]
+    Root,
 
-        // Always add the line to current block
-        current_block.push_str(line);
+    // ConditionalsOperators
+    #[token("==")]
+    Equality,
+    #[token("===")]
+    TrueEquality,
+    #[token("!=")]
+    NotEqual,
+    #[token(">")]
+    Greater,
+    #[token("<")]
+    Less,
+    #[token(">=")]
+    GreaterOEqual,
+    #[token("<=")]
+    LessOEqual,
 
-        // Count opening and closing braces
-        brace_depth += line.matches('{').count();
-        brace_depth -= line.matches('}').count();
+    //MiscSymbols
+    #[token(">>")]
+    AppendW,
+    #[token("<<")]
+    AppendR,
+    #[token("->")]
+    Print,
 
-        // Check if block ends
-        if brace_depth == 0 && (trimmed.ends_with(";") || current_block.contains('{')) {
-            blocks.push(current_block.trim().to_string());
-            current_block.clear();
-        }
-    }
+    // IDENTIFIER: variable/function names
+    #[regex(r"[a-zA-Z_][a-zA-Z0-9_]*", priority = 1)]
+    Identifier,
 
-    return blocks;
+    // LITERALS (simplified)
+    #[regex(r"\d+", priority = 2)]
+    Number,
+    #[regex(r#"["'][^"']*["']"#)]
+    String,
+    #[regex(r"TRUE|FALSE|1|0", priority = 3)]
+    Bool,
 }
 
-pub fn openFile(fileName: &str) -> Vec<String> {
+pub fn openFile(fileName: &str) -> String {
     // Try to open the file
     let mut file: File = File::open(fileName).expect("Failed to open file");
 
@@ -41,5 +93,21 @@ pub fn openFile(fileName: &str) -> Vec<String> {
     file.read_to_string(&mut contents).expect("Failed to read file");
 
     // Return the string containing the code from the Jade File
-    return scanCode(contents);
+    return contents;
+}
+
+/// turns the raw code into a list of token:value pairs.
+/// Used after openFile()
+pub fn lexCode(rawCode: String) -> Vec<(Token, String)> {
+    let mut tokens: Vec<(Token, String)> = Vec::new();
+
+    let mut lexer = Token::lexer(rawCode.as_str());
+
+    while let Some(token) = lexer.next() {
+        // `lexer.slice()` returns the actual text that matched the token
+        //println!("Token: {:?} => Value: {:?}", token, lexer.slice());
+        tokens.push((token.unwrap(), lexer.slice().to_string()));
+    }
+
+    return tokens;
 }
