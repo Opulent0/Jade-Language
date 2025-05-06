@@ -1,0 +1,7 @@
+var myVar int8 = 88;
+
+if (myVar < 5) {
+    print("less than 5")
+} else {
+    print("greater than 5")
+}
