@@ -56,17 +56,40 @@ fn main() {
                 readable data for Jade.
     */
 
-    // Scan the code and chunk it
-    // the Jade code extracted from the file. 
-    let rawCode: String = openFile("src/firstTest.bg");
+    // The Jade code extracted from the file. 
+    let rawCode: String = openFile("firstTest.bg");
     
     // The tokens extracted from the raw Code
     let tokens: Vec<(Token, String)> = lexCode(rawCode);
-
     print!("Tokens: \n{:?}", tokens);
+
+    // Chunk the tokens into blocks that will be read by the parser
+    let tokenBlocks = chunkCode(tokens);
+
+    // Take the blocks and turn them into structs of data
+    let parsedCode = parseCode(tokenBlocks);
+
+    // At this point we'll enter runtime.
+
+    // At this point the code will run and do its thing.
+
+    // Last Step: Win. Hopefully.
+
 }
 
+#[derive(Debug)]
+pub struct TokenBlock {
+    pub tokens: Vec<(Token, String)>,
+}
 
-pub fn parseCode() {
+pub fn chunkCode (tokens: Vec<(Token,String)>) -> Vec<TokenBlock> {
+    let mut tokenBlocks: Vec<TokenBlock> = Vec::new();
+    // Add logic here
+    return tokenBlocks;
+}
 
+pub fn parseCode(tokenBlocks: Vec<TokenBlock>) -> Vec<ParsedBlock> {
+    let mut parsedCode: Vec<ParsedBlock> = Vec::new();
+    // Add logic here
+    return parsedCode;
 }
