@@ -6,7 +6,7 @@
 > Why not. It'll make me a better programmer and force me to learn something new.
 
 ### What's with the .bg file extension?
-> # ***BIG GREEN***
+> ***BIG GREEN***
 
 ### Not too sure what else to put here.
 > Please ask any questions about the Jade and I'll answer them here.
