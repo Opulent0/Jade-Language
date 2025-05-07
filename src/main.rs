@@ -168,7 +168,7 @@ pub fn parseCode(tokenBlocks: Vec<TokenBlock>) -> Vec<ParsedBlock> {
             }
 
             _ => {
-                println!("Unrecognized token sequence: {:?}", tokens);
+                println!("Bruh. This shit's ass. I can't parse this shit! LMAO");
             }
         }
     }
