@@ -1,0 +1,11 @@
+const myVar uint8 = 8;
+var myOtherVar int = 88;
+
+if (myVar < myOtherVar) {
+    print("HI");
+    if (Yes) {
+        print("WORKI!!!!");
+    }
+} else {
+    print("BYE");
+}

@@ -26,10 +26,10 @@ Variables:
     Basic Types:
         Integers:
             int         - defaults to an int32
-            int8        - 8  bit int (-127 to 127)
-            int16       - 16 bit int (-32767 to 32767)
-            int32       - 32 bit int (-2,147,483,647 to 2,147,483,647)
-            int64       - 64 bit int (-9,223,372,036,854,775,807 to 9,223,372,036,854,775,807)
+            int8        - 8  bit int (-128 to 127)
+            int16       - 16 bit int (-32768 to 32767)
+            int32       - 32 bit int (-2,147,483,648 to 2,147,483,647)
+            int64       - 64 bit int (-9,223,372,036,854,775,808 to 9,223,372,036,854,775,807)
         
             Extra stuff:
                 Adding 'u' before the 'int' removes the ability 
