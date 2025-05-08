@@ -99,7 +99,7 @@ pub fn chunkCode (tokens: Vec<(Token,String)>) -> Vec<TokenBlock> {
         match t.1.as_str() {
             
             // increment braceDepth to enter a block of code
-            "{" => {braceDepth += 1},
+            "{" => {braceDepth += 1;},
             
             // decrement braceDepth to exit the Layer of code0
             "}" => {
@@ -147,24 +147,24 @@ pub fn parseCode(tokenBlocks: Vec<TokenBlock>) -> Vec<ParsedBlock> {
 
         match tokens[0].0 {
             Token::Var | Token::Const | Token::Sink => {
-                let identifier = tokens.get(1).map(|(_, v)| v.clone()).unwrap_or_default();
-                let value = tokens.get(3).map(|(_, v)| v.clone());
+                let identifier: String = tokens.get(0).map(|(_, v)| v.clone()).unwrap_or_default();
+                let name: Option<String> = tokens.get(1).map(|(_, v)| v.clone());
+                let datatype: Option<String> = tokens.get(2).map(|(_, v)| v.clone());
+                let value: Option<String> = tokens.get(4).map(|(_, v)| v.clone());
 
                 parsedCode.push(ParsedBlock {
-                    blockType: String::from("VariableDecl"),
+                    blockType: String::from("VarDec"),
                     identifier,
+                    name,
+                    datatype,
                     value,
                     ..Default::default()
                 });
             }
-
-            Token::Sink => {
-                // Example sink statement
-                parsedCode.push(ParsedBlock {
-                    blockType: String::from("SinkStatement"),
-                    identifier: tokens.get(1).map(|(_, v)| v.clone()).unwrap_or_default(),
-                    ..Default::default()
-                });
+            
+            Token::ControlBlock => {
+                let identifier: String = tokens.get(0).map(|(_, v)| v.clone()).unwrap_or_default();
+                println!("Man I can't with this fuckass Language. I just fucking can't...")
             }
 
             _ => {

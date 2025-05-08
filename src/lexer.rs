@@ -61,7 +61,7 @@ pub enum Token {
     #[token("<=")]
     LessOEqual,
 
-    //MiscSymbols
+    //MISCSymbols
     #[token(">>")]
     AppendW,
     #[token("<<")]
@@ -69,16 +69,24 @@ pub enum Token {
     #[token("->")]
     Print,
 
-    // IDENTIFIER: variable/function names
+    // IDENTIFIERS
     #[regex(r"[a-zA-Z_][a-zA-Z0-9_]*", priority = 1)]
-    Identifier,
+    Name,
+
+    // KEYWORDS
+    #[regex(r"if|elif|else|while|unless|for|until|switch")]
+    ControlBlock,
+    #[regex(r"print")]
+    BuiltIn,
+    #[regex(r"\$|@|%|")]
+    DataType,
 
     // LITERALS (simplified)
     #[regex(r"\d+", priority = 2)]
     Number,
     #[regex(r#"["'][^"']*["']"#)]
     String,
-    #[regex(r"TRUE|FALSE|1|0", priority = 3)]
+    #[regex(r"[Tt][Rr][Uu][Ee]|[Ff][Aa][Ll][Ss][Ee]|1|0", priority = 3)]
     Bool,
 }
 

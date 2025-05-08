@@ -1,5 +1,4 @@
-const myVar uint8 = 8;
-var myOtherVar int = 88;
+var myBool $ = tRUe;
 
 if (myVar < myOtherVar) {
     print("HI");
