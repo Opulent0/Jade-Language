@@ -17,6 +17,16 @@ use lexer::openFile;
 use lexer::lexCode;
 use crate::lexer::Token;
 
+// Import functions from parser
+use parser::chunkCode;
+use parser::parseCode;
+use parser::TokenBlock;
+use parser::ParsedBlock;
+use std::collections::HashMap;
+
+// Import functions from runtime
+use runtime::jruntime;
+
 /*
     AUTHOR:         Dyl C.
     DATE:           5/5/2025
@@ -55,123 +65,15 @@ fn main() {
 
     // Chunk the tokens into blocks that will be read by the parser
     let tokenBlocks: Vec<TokenBlock> = chunkCode(tokens);
-
+    
     // Take the blocks and turn them into structs of data
     let parsedCode: Vec<ParsedBlock> = parseCode(tokenBlocks);
-    print!("\n{:?}", parsedCode);
+    
     // At this point we'll enter runtime.
-
+    jruntime(parsedCode);
     // At this point the code will run and do its thing.
 
     // Last Step: Win. Hopefully.
 
 }
 
-/// A block of tokens. Will only contain the tokens pertaining to the
-/// block of block.
-#[derive(Debug)]
-pub struct TokenBlock {
-    pub tokens: Vec<(Token, String)>,
-}
-
-// Add some functionality to the TokenBlock Struct
-impl TokenBlock {
-    // Function that needs a mutable reference to self
-    fn addItem(&mut self, item: (Token, String)) {
-        self.tokens.push(item);
-    }
-}
-
-/// Chunks the code into pieces to be read by the parsCode fn.
-pub fn chunkCode (tokens: Vec<(Token,String)>) -> Vec<TokenBlock> {
-    // Setup variables we will use later for creating the parsed data.+
-    let mut tokenBlocks: Vec<TokenBlock> = Vec::new();
-    let mut currentBlock = TokenBlock { tokens: Vec::new() };
-
-    let mut braceDepth: u8 = 0;
-    
-    // This shit is probably confusing so lemme break it down
-    // We loop through token:value pairs and do a case statement
-    // We increment or decrement braceDepth based on the token type
-    // We also check for semicolons to determine if the line should
-    // end the block.
-    for t in tokens {
-        match t.1.as_str() {
-            
-            // increment braceDepth to enter a block of code
-            "{" => {braceDepth += 1;},
-            
-            // decrement braceDepth to exit the Layer of code0
-            "}" => {
-                braceDepth -= 1;
-                if braceDepth == 0 {
-                    tokenBlocks.push(currentBlock);
-                    currentBlock = TokenBlock { tokens: Vec::new() }; // fresh block
-                }},
-            ";" => {if (braceDepth == 0) {
-                tokenBlocks.push(currentBlock);
-                currentBlock = TokenBlock { tokens: Vec::new() }; // fresh block
-            }},
-            _   => currentBlock.addItem(t)
-        }
-    }
-
-    return tokenBlocks;
-}
-
-/// A Struct for each different possible property of a parsed block.
-#[derive(Debug, Default)]
-pub struct ParsedBlock {
-    pub blockType: String,
-    pub identifier: String,
-    pub name: Option<String>,
-    pub datatype: Option<String>,
-    pub value: Option<String>,
-    pub condition: Option<String>,
-    pub body: Option<Vec<ParsedBlock>>, // Nested blocks after parsing
-    pub parameters: Option<Vec<String>>,
-    pub returnType: Option<String>,
-}
-
-/// Takes the chunked code and breaks it down even further.
-/// It only takes what is nessesary and returns a Vec of structs. 
-pub fn parseCode(tokenBlocks: Vec<TokenBlock>) -> Vec<ParsedBlock> {
-    let mut parsedCode: Vec<ParsedBlock> = Vec::new();
-
-    for block in tokenBlocks {
-        let tokens = &block.tokens;
-
-        if tokens.is_empty() {
-            continue;
-        }
-
-        match tokens[0].0 {
-            Token::Var | Token::Const | Token::Sink => {
-                let identifier: String = tokens.get(0).map(|(_, v)| v.clone()).unwrap_or_default();
-                let name: Option<String> = tokens.get(1).map(|(_, v)| v.clone());
-                let datatype: Option<String> = tokens.get(2).map(|(_, v)| v.clone());
-                let value: Option<String> = tokens.get(4).map(|(_, v)| v.clone());
-
-                parsedCode.push(ParsedBlock {
-                    blockType: String::from("VarDec"),
-                    identifier,
-                    name,
-                    datatype,
-                    value,
-                    ..Default::default()
-                });
-            }
-            
-            Token::ControlBlock => {
-                let identifier: String = tokens.get(0).map(|(_, v)| v.clone()).unwrap_or_default();
-                println!("Man I can't with this fuckass Language. I just fucking can't...")
-            }
-
-            _ => {
-                println!("Bruh. This shit's ass. I can't parse this shit! LMAO");
-            }
-        }
-    }
-
-    return parsedCode;
-}
