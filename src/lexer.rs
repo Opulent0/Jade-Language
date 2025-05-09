@@ -5,7 +5,8 @@ use std::fs::File;
 use std::io::Read;
 use logos::Logos;
 
-#[derive(Logos, Debug, PartialEq)]
+#[allow(dead_code)]
+#[derive(Logos, Debug, PartialEq, Clone)]
 #[logos(skip r"[ \t\n\f\r]+")] // Ignore this regex pattern between tokens
 pub enum Token {
     // KEYWORDS
