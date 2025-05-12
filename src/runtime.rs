@@ -1,7 +1,6 @@
-
+use crate::evaluator::evaluate;
 use std::collections::HashMap;
 use crate::parser::ParsedBlock;
-
 
 #[allow(dead_code)]
 #[derive(Debug, Clone)]
@@ -52,6 +51,7 @@ impl Runtime {
 
     // Add a new variable
     pub fn declare_variable(&mut self, name: String, value: Value) {
+        println!("Declaring {} as {:?}", name, value);
         self.variables.insert(name, value);
     }
 
@@ -63,6 +63,7 @@ impl Runtime {
     // Set the value of an existing variable
     pub fn set_variable(&mut self, name: String, value: Value) {
         if let Some(var) = self.variables.get_mut(&name) {
+            println!("Setting {} as {:?}", name, value);
             *var = value;
         }
     }
@@ -73,23 +74,33 @@ pub fn jruntime(code: Vec<ParsedBlock>) {
     for block in code {
         match block.blockType.as_str() {
             "VarDec" => {
-                let dtype = getDataType(block.datatype.unwrap(), block.value.unwrap());
-                // Variable is already stored from the parser, no need to do anything here
-                println!("Declaring Variable: {:?}", block.name.clone().unwrap());
-                variables.declare_variable(block.name.unwrap(), dtype.clone());
+                let expr = block.value.unwrap();
+                let expected_type = block.datatype.clone(); // e.g., Some("int8")
+                let value = evaluate(&expr, &variables, expected_type.as_deref());
+                variables.declare_variable(block.name.unwrap(), value);
             },
             
             "VarSet" => {
                 // Set an existing variable to a new value
                 if let Some(ref name) = block.name {
-                    let dtype = variables.get_variable(name);
-                    if let mut datatype =  dtype {
-                        let new_value = dtype.clone();
-                        // Update the value of the variable
-                        datatype = new_value.clone();
-                        println!("Updated Variable {} to {:?}", name, new_value.unwrap());
-                    } else {
-                        println!("Error: Variable '{}' not found", name);
+                    //println!("Parsed block value: {:?}", block.value);
+                    if let Some(expr) = block.value {
+                        let existing = variables.get_variable(name).unwrap();
+                        let expected_type = match existing {
+                            Value::Int8(_) => Some("int8"),
+                            Value::UInt8(_) => Some("uint8"),
+                            Value::Int16(_) => Some("int16"),
+                            Value::UInt16(_) => Some("uint16"),
+                            Value::Int32(_) => Some("int32"),
+                            Value::UInt32(_) => Some("uint32"),
+                            Value::Int64(_) => Some("int64"),
+                            Value::UInt64(_) => Some("uint64"),
+                            Value::Float32(_) => Some("float32"),
+                            Value::Float64(_) => Some("float64"),
+                            _ => None
+                        };
+                        let new_value = evaluate(&expr, &variables, expected_type);
+                        variables.set_variable(name.clone(), new_value);
                     }
                 }
             },
@@ -109,87 +120,6 @@ pub fn jruntime(code: Vec<ParsedBlock>) {
     }
 }
 
-/// Takes the String and returns the datatype of the variable
-/// This is a placeholder function and will be replaced with
-fn getDataType(typing: String, value: String) -> Value {
-    match typing.as_str() {
-        "int8" => Value::Int8(value.parse::<i8>().unwrap_or(0)),
-        "uint8" => Value::UInt8(value.parse::<u8>().unwrap_or(0)),
-        "int16" => Value::Int16(value.parse::<i16>().unwrap_or(0)),
-        "uint16" => Value::UInt16(value.parse::<u16>().unwrap_or(0)),
-        "int32" => Value::Int32(value.parse::<i32>().unwrap_or(0)),
-        "uint32" => Value::UInt32(value.parse::<u32>().unwrap_or(0)),
-        "int64" => Value::Int64(value.parse::<i64>().unwrap_or(0)),
-        "uint64" => Value::UInt64(value.parse::<u64>().unwrap_or(0)),
-        "float32" => Value::Float32(value.parse::<f32>().unwrap_or(0.0)),
-        "float64" => Value::Float64(value.parse::<f64>().unwrap_or(0.0)),
-        "string" => Value::String(value.clone()),
-        "bool" => Value::Bool(value.parse::<bool>().unwrap_or(false)),
-
-        "int" => {
-            if let Ok(v) = value.parse::<i8>() {
-                Value::Int8(v)
-            } else if let Ok(v) = value.parse::<u8>() {
-                Value::UInt8(v)
-            } else if let Ok(v) = value.parse::<i16>() {
-                Value::Int16(v)
-            } else if let Ok(v) = value.parse::<u16>() {
-                Value::UInt16(v)
-            } else if let Ok(v) = value.parse::<i32>() {
-                Value::Int32(v)
-            } else if let Ok(v) = value.parse::<u32>() {
-                Value::UInt32(v)
-            } else if let Ok(v) = value.parse::<i64>() {
-                Value::Int64(v)
-            } else if let Ok(v) = value.parse::<u64>(){
-                Value::UInt64(v)
-            } else {
-                Value::Null // Fallback to null if parsing fails
-            }
-        },
-
-        "float" => {
-            if let Ok(v) = value.parse::<f32>() {
-                Value::Float32(v)
-            } else if let Ok(v) = value.parse::<f64>() {
-                Value::Float64(v)
-            } else {
-                Value::Null // Fallback to null if parsing fails
-            }
-        },
-
-        "$" => {
-            // Infer type from value string
-            if let Ok(v) = value.parse::<i64>() {
-                getDataType("int".to_string(), v.to_string())
-            } else if let Ok(v) = value.parse::<f64>() {
-                getDataType("float".to_string(), v.to_string())
-            } else if value == "TRUE" || value == "FALSE" {
-                Value::Bool(value == "true")
-            } else {
-                // Fallback to string
-                Value::String(value)
-            }
-        },
-
-        _ => Value::Null, // Unknown type
-    }
-}
-
 fn printStatement(printVar: &Value) {
-    match printVar {
-        Value::Int8(v) => println!("{}", v),
-        Value::UInt8(v) => println!("{}", v),
-        Value::Int16(v) => println!("{}", v),
-        Value::UInt16(v) => println!("{}", v),
-        Value::Int32(v) => println!("{}", v),
-        Value::UInt32(v) => println!("{}", v),
-        Value::Int64(v) => println!("{}", v),
-        Value::UInt64(v) => println!("{}", v),
-        Value::String(v) => println!("{}", v),
-        Value::Bool(v) => println!("{}", v),
-        Value::Float32(v) => println!("{}", v),
-        // Add other cases as needed
-        other => println!("Unhandled value: {:?}", other),
-    }
+    println!("{:?}", printVar)
 }
