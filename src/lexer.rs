@@ -9,6 +9,10 @@ use logos::Logos;
 #[derive(Logos, Debug, PartialEq, Clone)]
 #[logos(skip r"[ \t\n\f\r]+")] // Ignore this regex pattern between tokens
 pub enum Token {
+    // COMMENT
+    #[regex(r"//[^\n]*", logos::skip)]
+    Comment,
+    
     // KEYWORDS
     #[token("var")]
     Var,
@@ -61,6 +65,25 @@ pub enum Token {
     GreaterOEqual,
     #[token("<=")]
     LessOEqual,
+    #[token("%")]
+    Modulo,
+    #[token("AND")]
+    #[token("&&")]
+    And,
+    #[regex("OR")]
+    #[token("||")]
+    Or,
+    #[regex("NOT")]
+    #[token("!")]
+    Not,
+    #[token("XOR")]
+    Xor,
+    #[token("NAND")]
+    Nand,
+    #[token("NOR")]
+    Nor,
+    #[token("XNOR")]
+    Xnor,
 
     //MISCSymbols
     #[token(">>")]
@@ -83,11 +106,11 @@ pub enum Token {
     DataType,
 
     // LITERALS (simplified)
-    #[regex(r"\d+", priority = 2)]
+    #[regex(r"\d+", priority = 3)]
     Number,
     #[regex(r#"["'][^"']*["']"#)]
     String,
-    #[regex(r"[Tt][Rr][Uu][Ee]|[Ff][Aa][Ll][Ss][Ee]|1|0", priority = 3)]
+    #[regex(r"[Tt][Rr][Uu][Ee]|[Ff][Aa][Ll][Ss][Ee]|1|0", priority = 2)]
     Bool,
 }
 
