@@ -1,3 +1,13 @@
-var myVar $ = 88;
+// Setting Variables.
+var myVar int8 = 1;
+var myOtherVar uint8 = 5;
 
-myVar = 1 + 2 * 3;
+// Change myVar to an expression (Should be 11)
+myVar = 8 + (1 + 2);
+
+myVar ->;
+myOtherVar ->;
+
+// Adding myOtherVar to myVar
+myVar = myVar + myOtherVar;
+myVar ->;
