@@ -1,7 +1,4 @@
 #![allow(non_snake_case)]
-//#![allow(unused_variables)]
-#![allow(unused_parens)]
-#![allow(unused_mut)]
 
 
 // Import the packages
@@ -10,9 +7,7 @@ mod parser;
 mod evaluator;
 mod runtime;
 mod jadeErrors;
-mod jadeTypes {
-    pub mod primitives;
-}
+
 
 // Import functions from lexer
 use lexer::openFile;
@@ -36,6 +31,8 @@ use runtime::jruntime;
                     Jman:
                         First Tester and go-to person for asking
                         "How does this look?"
+                    Moss:
+                        Eventually gonna force hime to test it.
                             
 */
 
@@ -46,13 +43,16 @@ fn main() {
     
     // The tokens extracted from the raw Code
     let tokens: Vec<(Token, String)> = lexCode(rawCode);
-   
+
     // Chunk the tokens into blocks that will be read by the parser
     let tokenBlocks: Vec<TokenBlock> = chunkCode(tokens);
+
     // Take the blocks and turn them into structs of data
     let parsedCode: Vec<ParsedBlock> = parseCode(tokenBlocks);
+    
     // At this point we'll enter runtime.
-    jruntime(parsedCode);
+    //jruntime(parsedCode);
+    
     // At this point the code will run and do its thing.
 
     // Last Step: Win. Hopefully.

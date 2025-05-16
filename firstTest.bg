@@ -1,13 +1,14 @@
-// Setting Variables.
-var myVar int8 = 1;
-var myOtherVar uint8 = 5;
+var myVar int = 126;
+//var myOtherVar uint16 = 22;
 
-// Change myVar to an expression (Should be 11)
-myVar = 8 + (1 + 2);
+//myVar = myOtherVar + myVar;
 
-myVar ->;
-myOtherVar ->;
+//myVar ->;
 
-// Adding myOtherVar to myVar
-myVar = myVar + myOtherVar;
-myVar ->;
+if (myVar > 50) {
+    myVar = 50;
+    myVar ->;
+
+} else {
+    myVar ->;
+}

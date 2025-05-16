@@ -1,5 +1,5 @@
 use crate::evaluator::evaluate;
-use std::collections::HashMap;
+use std::{collections::HashMap};
 use crate::parser::ParsedBlock;
 
 #[allow(dead_code)]
@@ -33,13 +33,12 @@ pub enum Value {
     Null,
 }
 
-
 #[derive(Default)]
 pub struct Runtime {
     // A hashmap to store variables and their values
     // The key is the variable name, and the value is a Value enum
     // that can hold different types of data.
-    pub variables: HashMap<String, Value>,
+    pub variables: HashMap<String, Box<(Value, String)>>,
 }
 #[allow(dead_code)]
 impl Runtime {
@@ -50,22 +49,27 @@ impl Runtime {
     }
 
     // Add a new variable
-    pub fn declare_variable(&mut self, name: String, value: Value) {
+    pub fn declare_variable(&mut self, name: String, value: Value, actualType: String) {
         println!("Declaring {} as {:?}", name, value);
-        self.variables.insert(name, value);
+        self.variables.insert(name, Box::new((value, actualType)));
     }
 
     // Get the value of a variable
     pub fn get_variable(&self, name: &str) -> Option<&Value> {
-        self.variables.get(name)
+        Some(&self.variables.get(name).unwrap().0)
     }
 
     // Set the value of an existing variable
     pub fn set_variable(&mut self, name: String, value: Value) {
         if let Some(var) = self.variables.get_mut(&name) {
             println!("Setting {} as {:?}", name, value);
-            *var = value;
+            var.0 = value;
         }
+    }
+
+    pub fn getVarType (&self, name: &str) -> &String {
+        let varType = &self.variables.get(name).unwrap().1;
+        return varType;
     }
 }
 
@@ -73,39 +77,19 @@ pub fn jruntime(code: Vec<ParsedBlock>) {
     let mut variables = Runtime::new();
     for block in code {
         match block.blockType.as_str() {
-            "VarDec" => {
-                let expr = block.value.unwrap();
-                let expected_type = block.datatype.clone(); // e.g., Some("int8")
-                let value = evaluate(&expr, &variables, expected_type.as_deref());
-                variables.declare_variable(block.name.unwrap(), value);
-            },
+            "VarDec"    => {
+                variables.declare_variable(
+                    block.name.unwrap().to_string(),
+                    evaluate(&block.value.unwrap(), &variables, Some(block.datatype.clone().unwrap())),
+                    block.datatype.unwrap()
+                );
+            }
+
+            "VarSet"    => {
+                variables.set_variable(block.name.clone().unwrap(), evaluate(&block.value.unwrap(), &variables, Some(variables.getVarType(block.name.unwrap().as_str()).clone())));
+            }
             
-            "VarSet" => {
-                // Set an existing variable to a new value
-                if let Some(ref name) = block.name {
-                    //println!("Parsed block value: {:?}", block.value);
-                    if let Some(expr) = block.value {
-                        let existing = variables.get_variable(name).unwrap();
-                        let expected_type = match existing {
-                            Value::Int8(_) => Some("int8"),
-                            Value::UInt8(_) => Some("uint8"),
-                            Value::Int16(_) => Some("int16"),
-                            Value::UInt16(_) => Some("uint16"),
-                            Value::Int32(_) => Some("int32"),
-                            Value::UInt32(_) => Some("uint32"),
-                            Value::Int64(_) => Some("int64"),
-                            Value::UInt64(_) => Some("uint64"),
-                            Value::Float32(_) => Some("float32"),
-                            Value::Float64(_) => Some("float64"),
-                            _ => None
-                        };
-                        let new_value = evaluate(&expr, &variables, expected_type);
-                        variables.set_variable(name.clone(), new_value);
-                    }
-                }
-            },
-            
-            "PrintVar" => {
+            "PrintVar"  => {
                 // Print the value of a variable
                 let dtype: Option<&Value> = variables.get_variable(block.name.unwrap().as_str());
                 let printVar: &Value = dtype.clone().unwrap();
@@ -121,5 +105,6 @@ pub fn jruntime(code: Vec<ParsedBlock>) {
 }
 
 fn printStatement(printVar: &Value) {
+
     println!("{:?}", printVar)
 }

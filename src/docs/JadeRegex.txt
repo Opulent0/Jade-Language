@@ -1,7 +1,0 @@
-varDeclaration:
-    "\b(^var|const)(?:\s+)(\w+)\b(?:\s+)(int8|uint8|int16|uint16|int32|uint32|int64|uint64|int|float32|float64|float|str)(?:\s+)(?:=)(?:\s+)(\w+)(?:;)"g
-
-ifElifElse:
-    "(if)\s+(\(.+\))\s+(\{(?:.*|\n|\s)+\n\} )+|(?:(elif)\s+(\(.+\))\s+(\{(.*|\n|\s)+\n\} )+)|(else)\s+(\{(.*|\n|\s)+\n\})+"gU
-    
-    https://regex101.com/r/MomPOE/1

@@ -1,4 +1,5 @@
 use crate::runtime::Value;
+
 /*
 
 pub fn unknownSyntaxError(line:&str) {
@@ -12,11 +13,12 @@ pub fn noEndingSemiColon(line:&str) {
 */
 
 pub fn parsingError() {
-    panic!("WTF is this dude!!? You never told me this was an option!?")
+    eprintln!("WTF is this dude!!? You never told me this was an option!?");
 }
 
 pub fn valueError(type_str: &str, other: Value) {
-    panic!("Error! Type mismatch! Expected: {type_str}, Found: {:?}", other);
+    println!("\n\n____________________________________________\nVALUE ERROR:");
+    panic!("Error! Type mismatch! Expected: {type_str}, Found: {:?}\n____________________________________________", other);
 }
 
 pub fn variableNotFoundError(name: &str) {

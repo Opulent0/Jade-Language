@@ -5,6 +5,7 @@ use std::fs::File;
 use std::io::Read;
 use logos::Logos;
 
+/// The tokens to be used with the parser.
 #[allow(dead_code)]
 #[derive(Logos, Debug, PartialEq, Clone)]
 #[logos(skip r"[ \t\n\f\r]+")] // Ignore this regex pattern between tokens
@@ -98,7 +99,7 @@ pub enum Token {
     Name,
 
     // KEYWORDS
-    #[regex(r"if|elif|else|while|unless|for|until|switch")]
+    #[regex(r"if|elif|else|while|unless|for|until|case")]
     ControlBlock,
     #[regex(r"print")]
     BuiltIn,
@@ -106,7 +107,7 @@ pub enum Token {
     DataType,
 
     // LITERALS (simplified)
-    #[regex(r"\d+", priority = 3)]
+    #[regex(r"\d+\.\d+|\d+", priority = 3)]
     Number,
     #[regex(r#"["'][^"']*["']"#)]
     String,
